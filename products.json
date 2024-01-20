@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Laptop",
+    "price": 4999,
+    "description": "czternasto calowy ekran",
+    "category": "Electronics",
+    "picture": "laptop.jpg"
+  },
+  {
+    "name": "Telefon",
+    "price": 2999,
+    "description": "Kompaktowy i szybki",
+    "category": "Electronics",
+    "picture": "smartphone.jpg"
+  },
+  {
+    "name": "Słuchawki nausze",
+    "price": 1999,
+    "description": "Z redukcją szumów",
+    "category": "Electronics",
+    "picture": "headphone.jpg"
+  },
+  {
+    "name": "Głośnik",
+    "price": 999,
+    "description": "przenośny i kompaktowy",
+    "category": "Electronics",
+    "picture": "speaker.jpg"
+  }
+]

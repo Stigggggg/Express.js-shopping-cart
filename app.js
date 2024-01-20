@@ -1,3 +1,5 @@
+// to do: "w kodzie ktory bedzie wyswietlal zdjecia na stronie trzeba dodac sciezke" 
+
 const http = require("http");
 const express = require("express");
 const bcrypt = require("bcrypt");
@@ -54,7 +56,7 @@ app.post("/signup", async (req, res) => {
             return;
         }
         const hashed = await bcrypt.hash(password, 10);
-        const ins_user = await shoppingDb.insertUser(username, hashed);
+        const ins_user = await shoppingDb.insertUser(username, hashed, 'USER');
         res.send("Rejestracja zakończona pomyślnie");
     }
     catch (error) {
@@ -62,7 +64,7 @@ app.post("/signup", async (req, res) => {
         res.send("Błąd rejestracji");
     }
 });
-
+//shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
 shoppingDb.initiateDB();
 
 http.createServer(app).listen(3000);
