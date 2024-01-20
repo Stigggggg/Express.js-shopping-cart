@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strona główna</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <h1>Witaj w sklepie internetowym!</h1>
-    <div>
-        <h3>Wybierz sposób korzystania:</h3>
-        <button onclick="window.location.href='/anonymous'">Przeglądaj bez logowania</button><br>
-        <button onclick="window.location.href='/login'">Zaloguj się</button><br>
-        <button onclick="window.location.href='/admin'">Korzystaj jako administrator</button>
+    <div class="menu">
+        <h2>Witaj w sklepie internetowym!</h2>
+        <div>
+            <h3>Wybierz sposób korzystania:</h3>
+            <button onclick="window.location.href='/anonymous'" class="redirect-btn">Przeglądaj bez logowania</button><br><br>
+            <button onclick="window.location.href='/login'" class="redirect-btn">Zaloguj się</button><br><br>
+            <button onclick="window.location.href='/admin'" class="redirect-btn">Korzystaj jako administrator</button>
+        </div>
     </div>
 </body>
 </html>

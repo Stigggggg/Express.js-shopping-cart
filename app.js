@@ -7,6 +7,7 @@ var app=express();
 app.set("view engine","ejs");
 app.set("views","./views");
 app.use(express.urlencoded({extended: true}));
+app.use(express.static("public"));
 
 var config={
     user: "foo",
@@ -55,7 +56,7 @@ app.post("/login",async(req,res)=>{
     catch(error)
     {
         console.error(error);
-        res.status(500).send("Błąd podczas logowania");
+        res.send("Błąd podczas logowania");
     }
     finally
     {
@@ -71,17 +72,25 @@ app.post("/signup",async(req,res)=>{
     try
     {
         var {username,password}=req.body;
-        const hashed=await bcrypt.hash(password,10);
         await mssql.connect(config);
-        var request=new mssql.Request();
-        var query=`INSERT INTO dbo.Users (username,password) VALUES ('${username}','${hashed}')`; 
-        await request.query(query);
+        var check_request=new mssql.Request();
+        var check_query=`SELECT * FROM dbo.Users WHERE username = '${username}'`;
+        var if_user=await check_request.query(check_query);
+        if(if_user.recordset.length>0)
+        {
+            res.send("Użytkownik o takiej nazwie już istnieje");
+            return;
+        }
+        const hashed=await bcrypt.hash(password,10);
+        var insert_request=new mssql.Request();
+        var insert_query=`INSERT INTO dbo.Users (username,password) VALUES ('${username}','${hashed}')`; 
+        await insert_request.query(insert_query);
         res.send("Rejestracja zakończona pomyślnie");
     }
     catch(error)
     {
         console.error(error);
-        res.status(500).send("Błąd rejestracji");
+        res.send("Błąd rejestracji");
     }
     finally
     {
