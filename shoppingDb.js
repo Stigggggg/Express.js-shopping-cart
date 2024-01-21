@@ -32,7 +32,7 @@ async function initiateDB() {
   const conn = await connect();
   console.log('Connected...');
   const createtableproducts = " IF OBJECT_ID(N'dbo.Products', N'U') IS NULL CREATE TABLE dbo.Products (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, NAME NVARCHAR(255) NOT NULL, PRICE decimal(8,2) NOT NULL, DESCRIPTION NVARCHAR(255) NOT NULL, CATEGORY NVARCHAR(255) NOT NULL, PICTURE NVARCHAR(255) NOT NULL)";
-  const createtableusers = "IF OBJECT_ID(N'dbo.Users', N'U') IS NULL CREATE TABLE dbo.Users (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, USERNAME NVARCHAR(40) NOT NULL, PASSWORD NVARCHAR(255) NOT NULL, ROLE NVARCHAR(40) NOT NULL)";
+  const createtableusers = "IF OBJECT_ID(N'dbo.Users', N'U') IS NULL CREATE TABLE dbo.Users (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, USERNAME NVARCHAR(40) NOT NULL, PASSWORD NVARCHAR(255) NOT NULL, EMAIL NVARCHAR(255) NOT NULL, ROLE NVARCHAR(40) NOT NULL)";
   const createtableorder = "IF OBJECT_ID(N'dbo.Orders', N'U') IS NULL CREATE TABLE dbo.Orders (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, ID_User int NOT NULL FOREIGN KEY (ID_User) REFERENCES Users(ID), NAME NVARCHAR(40) NOT NULL, DATE datetime2(7) NOT NULL)";
   const createtableorderdetails = "IF OBJECT_ID(N'dbo.OrderDetails', N'U') IS NULL CREATE TABLE dbo.OrderDetails (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, ID_Order int NOT NULL FOREIGN KEY (ID_Order) REFERENCES Orders(ID), ID_Product int NOT NULL FOREIGN KEY (ID_Product) REFERENCES Products(ID), QUANTITY int NOT NULL, PRICE decimal(8,2) NOT NULL)";
   try {
@@ -72,7 +72,7 @@ async function initiateDB() {
 async function insertAdmin() {
   const admin = require('./admin.json');
   const hashed = await bcrypt.hash(admin[0].password, 10);
-  await insertUser(admin[0].user, hashed, 'ADMIN');
+  await insertUser(admin[0].user, hashed, 'not require', 'ADMIN');
 }
 
 async function getUser(username) {
@@ -83,9 +83,9 @@ async function getUser(username) {
   return result;
 }
 
-async function insertUser(username, hashed, role) {
+async function insertUser(username, hashed, email, role) {
   const conn = await connect();
-  const sql = `INSERT INTO dbo.Users (USERNAME, PASSWORD, ROLE) VALUES ('${username}','${hashed}', '${role}')`;
+  const sql = `INSERT INTO dbo.Users (USERNAME, PASSWORD, EMAIL, ROLE) VALUES ('${username}','${hashed}', '${email}', '${role}')`;
   const result = await runSQL(conn, sql, 'Inserting user');
   conn.close();
   return result;
@@ -105,6 +105,61 @@ async function initiateProducts() {
   conn.close();
 }
 
+async function insertProduct(product) { //for admin
+  const conn = await connect();
+  const value = `('${product.name}', ${product.price}, '${product.description}', '${product.category}', '${product.picture}')`;
+  const sql = `INSERT INTO dbo.Products (NAME, PRICE, DESCRIPTION, CATEGORY, PICTURE) VALUES ${value}`;
+  const result = await runSQL(conn, sql, 'Inserting product');
+  conn.close();
+}
+
+async function deleteProduct(id) { //for admin
+  const conn = await connect();
+  const sql = `DELETE FROM dbo.Products WHERE ID = ${id}`;
+  const result = await runSQL(conn, sql, 'Deleting product');
+  conn.close();
+}
+
+async function updateProduct(id, product) { //for admin
+  const conn = await connect();
+  const sql = `UPDATE dbo.Products SET name = '${product.name}', price = ${product.price}, description = '${product.description}', category = '${product.category}', picture = '${product.picture}' WHERE ID = ${id}`;
+  const result = await runSQL(conn, sql, 'Updating product');
+  conn.close();
+}
+
+async function getAllUsers() { // for user list
+  const conn = await connect();
+  const sql = `SELECT USERNAME FROM dbo.Users WHERE ROLE = 'USER'`;
+  const result = await runSQL(conn, sql, 'Getting all user names');
+  console.log(result);
+  conn.close();
+}
+
+async function deleteUser(id) { // for admin 
+  const conn = await connect();
+  const sql = `DELETE FROM dbo.Users WHERE ROLE = 'USER' AND ID = ${id}`;
+  const result = await runSQL(conn, sql, 'Deleting one user');
+  console.log(result);
+  conn.close();
+}
+
+async function getAllProducts() { // for creating website 
+  const conn = await connect();
+  const sql = `SELECT * FROM dbo.Products`;
+  const result = await runSQL(conn, sql, 'Getting all products');
+  console.log(result);
+  conn.close();
+}
+
+async function searchProduct(product) { // for creating website 
+  const conn = await connect();
+  const sql = `SELECT ID, NAME, PRICE, DESCRIPTION, CATEGORY, PICTURE FROM dbo.Products WHERE (NAME LIKE '%${product}%') OR (DESCRIPTION LIKE '%${product}%')`;
+  const result = await runSQL(conn, sql, 'Searching the product');
+  console.log(result);
+  conn.close();
+}
+
+
 async function runSQL(conn, sql, comment) {
   return new Promise(function (resolve, reject) {
     conn.query(sql, function (err, result) {
@@ -122,5 +177,12 @@ module.exports = {
   dropDB,
   initiateDB,
   getUser,
-  insertUser
+  insertUser,
+  insertProduct,
+  deleteProduct,
+  updateProduct,
+  getAllUsers,
+  deleteUser,
+  getAllProducts,
+  searchProduct
 }
