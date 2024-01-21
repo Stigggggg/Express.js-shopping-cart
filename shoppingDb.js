@@ -13,7 +13,7 @@ var config={
 };*/
 
 async function connect() {
-  const configDB = require('./configdb.json');  
+  const configDB = require('./configdb.json');
   const conn = new mssql.ConnectionPool(
     `server=localhost,1433;database=WEPPO;trustServerCertificate=true;user id=${configDB[0].user};password=${configDB[0].password}`);
   await conn.connect();
@@ -32,8 +32,8 @@ async function initiateDB() {
   const conn = await connect();
   console.log('Connected...');
   const createtableproducts = " IF OBJECT_ID(N'dbo.Products', N'U') IS NULL CREATE TABLE dbo.Products (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, NAME NVARCHAR(255) NOT NULL, PRICE decimal(8,2) NOT NULL, DESCRIPTION NVARCHAR(255) NOT NULL, CATEGORY NVARCHAR(255) NOT NULL, PICTURE NVARCHAR(255) NOT NULL)";
-  const createtableusers = "IF OBJECT_ID(N'dbo.Users', N'U') IS NULL CREATE TABLE dbo.Users (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, USERNAME NVARCHAR(40) NOT NULL, PASSWORD NVARCHAR(255) NOT NULL, EMAIL NVARCHAR(255) NOT NULL, ROLE NVARCHAR(40) NOT NULL)";
-  const createtableorder = "IF OBJECT_ID(N'dbo.Orders', N'U') IS NULL CREATE TABLE dbo.Orders (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, ID_User int NOT NULL FOREIGN KEY (ID_User) REFERENCES Users(ID), NAME NVARCHAR(40) NOT NULL, DATE datetime2(7) NOT NULL)";
+  const createtableusers = "IF OBJECT_ID(N'dbo.Users', N'U') IS NULL CREATE TABLE dbo.Users (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, USERNAME NVARCHAR(40) NOT NULL, PASSWORD NVARCHAR(255) NOT NULL, ROLE NVARCHAR(40) NOT NULL)";
+  const createtableorder = "IF OBJECT_ID(N'dbo.Orders', N'U') IS NULL CREATE TABLE dbo.Orders (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, ID_User int NOT NULL FOREIGN KEY (ID_User) REFERENCES Users(ID), NAME NVARCHAR(40) NOT NULL, DATE datetime2(7) NOT NULL, ORDERVALUE decimal(8,2) NOT NULL)";
   const createtableorderdetails = "IF OBJECT_ID(N'dbo.OrderDetails', N'U') IS NULL CREATE TABLE dbo.OrderDetails (ID int IDENTITY(1,1) NOT NULL PRIMARY KEY, ID_Order int NOT NULL FOREIGN KEY (ID_Order) REFERENCES Orders(ID), ID_Product int NOT NULL FOREIGN KEY (ID_Product) REFERENCES Products(ID), QUANTITY int NOT NULL, PRICE decimal(8,2) NOT NULL)";
   try {
     await runSQL(conn, createtableproducts, 'Create products');
@@ -43,7 +43,7 @@ async function initiateDB() {
 
     const countProductsSQL = `SELECT COUNT(*) AS C FROM dbo.Products`;
     const countProducts = await runSQL(conn, countProductsSQL, 'Counting products');
-    
+
     if (countProducts.recordset[0].C > 0) {
       console.log('products already exist');
     }
@@ -60,7 +60,7 @@ async function initiateDB() {
     else {
       await insertAdmin();
     }
- 
+
   } catch (error) {
     conn.close();
   } finally {
@@ -72,7 +72,7 @@ async function initiateDB() {
 async function insertAdmin() {
   const admin = require('./admin.json');
   const hashed = await bcrypt.hash(admin[0].password, 10);
-  await insertUser(admin[0].user, hashed, 'not require', 'ADMIN');
+  await insertUser(admin[0].user, hashed, 'ADMIN');
 }
 
 async function getUser(username) {
@@ -83,9 +83,9 @@ async function getUser(username) {
   return result;
 }
 
-async function insertUser(username, hashed, email, role) {
+async function insertUser(username, hashed, role) {
   const conn = await connect();
-  const sql = `INSERT INTO dbo.Users (USERNAME, PASSWORD, EMAIL, ROLE) VALUES ('${username}','${hashed}', '${email}', '${role}')`;
+  const sql = `INSERT INTO dbo.Users (USERNAME, PASSWORD, ROLE) VALUES ('${username}','${hashed}', '${role}')`;
   const result = await runSQL(conn, sql, 'Inserting user');
   conn.close();
   return result;
@@ -160,6 +160,35 @@ async function searchProduct(product) { // for creating website
 }
 
 
+async function createOrder(order, orderitems) { //potrzbne do koszyka
+  const conn = await connect();
+  try {
+    let orderID;
+
+    let sql = `INSERT INTO dbo.Orders (ID_User, NAME, DATE, ORDERVALUE) OUTPUT Inserted.ID VALUES (${order.id_user}, '${order.name}', '${order.date}', ${order.orderValue})`;
+    console.log(sql);
+    const result = await runSQL(conn, sql, 'Creting order');
+    console.log(result);
+
+    orderID = result.recordset[0].ID;
+
+    let values = '';
+    orderitems.forEach(orderitem => {
+    const value = `(${orderID}, ${orderitem.idProduct}, ${orderitem.quantity}, ${orderitem.price}), `;
+    values += value;
+    });
+    values = values.substring(0, values.length - 2);
+
+
+    const sql2 = `INSERT INTO dbo.OrderDetails (ID_Order, ID_Product, QUANTITY, PRICE) VALUES ${values}`;
+    const result2 = await runSQL(conn, sql2, 'Inserting orders');
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
 async function runSQL(conn, sql, comment) {
   return new Promise(function (resolve, reject) {
     conn.query(sql, function (err, result) {
@@ -184,5 +213,6 @@ module.exports = {
   getAllUsers,
   deleteUser,
   getAllProducts,
-  searchProduct
+  searchProduct,
+  createOrder
 }

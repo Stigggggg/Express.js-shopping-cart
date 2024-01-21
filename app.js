@@ -73,5 +73,12 @@ shoppingDb.initiateDB();
 //shoppingDb.getAllProducts();
 //shoppingDb.deleteUser(2);
 //shoppingDb.searchProduct('fon');
+shoppingDb.createOrder(
+    { id_user: 3, name: 'zamowienie1', date: '2016-10-23 12:45:37.1234567', orderValue: 13997},
+    [
+        {idProduct: 2, quantity: 2, price: 999},
+        {idProduct: 3, quantity: 1, price: 4000},
+        {idProduct: 4, quantity: 1, price: 7999}
+    ] )
 http.createServer(app).listen(3000);
 console.log("started");
