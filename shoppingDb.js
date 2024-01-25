@@ -135,7 +135,7 @@ async function getAllUsers() { // for user list
   conn.close();
 }
 
-async function deleteUser(id) { // for admin 
+async function deleteUser(id) { // for admin
   const conn = await connect();
   const sql = `DELETE FROM dbo.Users WHERE ROLE = 'USER' AND ID = ${id}`;
   const result = await runSQL(conn, sql, 'Deleting one user');
@@ -143,20 +143,22 @@ async function deleteUser(id) { // for admin
   conn.close();
 }
 
-async function getAllProducts() { // for creating website 
+async function getAllProducts() { // for creating website
   const conn = await connect();
   const sql = `SELECT * FROM dbo.Products`;
   const result = await runSQL(conn, sql, 'Getting all products');
   console.log(result);
   conn.close();
+  return result;
 }
 
-async function searchProduct(product) { // for creating website 
+async function searchProduct(product) { // for creating website
   const conn = await connect();
   const sql = `SELECT ID, NAME, PRICE, DESCRIPTION, CATEGORY, PICTURE FROM dbo.Products WHERE (NAME LIKE '%${product}%') OR (DESCRIPTION LIKE '%${product}%')`;
   const result = await runSQL(conn, sql, 'Searching the product');
   console.log(result);
   conn.close();
+  return result;
 }
 
 

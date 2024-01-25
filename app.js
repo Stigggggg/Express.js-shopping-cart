@@ -1,4 +1,4 @@
-// to do: "w kodzie ktory bedzie wyswietlal zdjecia na stronie trzeba dodac sciezke" 
+// to do: "w kodzie ktory bedzie wyswietlal zdjecia na stronie trzeba dodac sciezke"
 
 const http = require("http");
 const express = require("express");
@@ -64,6 +64,19 @@ app.post("/signup", async (req, res) => {
         res.send("Błąd rejestracji");
     }
 });
+
+
+app.get("/anonymous", async (req, res) => {
+    try {
+        const products = await shoppingDb.getAllProducts();
+        res.render("anonymous", { products : products.recordset });
+    }
+    catch (error) {
+        console.error(error);
+        res.send("Błąd podczas pobierania produktów");
+    }
+});
+
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
 shoppingDb.initiateDB();
 //shoppingDb.insertProduct({name: 'Pralka', price: 2999, description: 'ładowana z góry', category: 'AGD', picture: 'pralka.jpg'});
@@ -73,12 +86,12 @@ shoppingDb.initiateDB();
 //shoppingDb.getAllProducts();
 //shoppingDb.deleteUser(2);
 //shoppingDb.searchProduct('fon');
-shoppingDb.createOrder(
-    { id_user: 3, name: 'zamowienie1', date: '2016-10-23 12:45:37.1234567', orderValue: 13997},
-    [
-        {idProduct: 2, quantity: 2, price: 999},
-        {idProduct: 3, quantity: 1, price: 4000},
-        {idProduct: 4, quantity: 1, price: 7999}
-    ] )
+// shoppingDb.createOrder(
+//     { id_user: 3, name: 'zamowienie1', date: '2016-10-23 12:45:37.1234567', orderValue: 13997},
+//     [
+//         {idProduct: 2, quantity: 2, price: 999},
+//         {idProduct: 3, quantity: 1, price: 4000},
+//         {idProduct: 4, quantity: 1, price: 7999}
+//     ] )
 http.createServer(app).listen(3000);
 console.log("started");
