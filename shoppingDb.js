@@ -129,10 +129,11 @@ async function updateProduct(id, product) { //for admin
 
 async function getAllUsers() { // for user list
   const conn = await connect();
-  const sql = `SELECT USERNAME FROM dbo.Users WHERE ROLE = 'USER'`;
+  const sql = `SELECT * FROM dbo.Users`;
   const result = await runSQL(conn, sql, 'Getting all user names');
   console.log(result);
   conn.close();
+  return result.recordset;
 }
 
 async function deleteUser(id) { // for admin

@@ -27,14 +27,18 @@ app.post("/login", async (req, res) => {
             const user = result.recordset[0];
             const password_match = await bcrypt.compare(password, user.PASSWORD);
             if (password_match) {
-                res.send("Logowanie pomyślne");
+                if(user.ROLE==="ADMIN") {
+                    res.redirect("/admin");
+                } else {
+                    res.send("Logowanie użytkownika pomyślne")
+                }
             }
             else {
                 res.send("Nieprawidłowe hasło");
             }
         }
         else {
-            res.send("Nie ma takiego użytkownika");
+            res.send("Błąd logowania - brak takich danych w bazie");
         }
     }
     catch (error) {
@@ -76,6 +80,61 @@ app.get("/anonymous", async (req, res) => {
         res.send("Błąd podczas pobierania produktów");
     }
 });
+
+
+app.get("/admin", (req, res) => {
+    res.render("admin");
+});
+
+app.get("/users", async (req, res) => {
+    try {
+        const users = await shoppingDb.getAllUsers();
+        res.render("users", { users });
+    } catch (error) {
+        console.error(error);
+        res.send("Nie udało się pobrać użytkowników");
+    }
+});
+
+app.get("/add", (req, res) => {
+    res.render("add");
+});
+
+app.post("/add", async (req, res) => {
+    try {
+        const { name, price, description, category, picture } = req.body;
+        await shoppingDb.insertProduct({ name, price, description, category, picture });
+        res.send(`Dodano produkt ${name}`);
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd dodawania");
+    }
+});
+
+//todo: remove i update
+// app.get("/remove", async (req, res) => {
+//     const product_id = req.query.id;
+//     if (!product_id) {
+//         res.send("Brak ID produktu");
+//         return;
+//     }
+//     const product = await shoppingDb.getProductById(product_id);
+//     if(!product) {
+//         res.send("Nie ma produktu o takim ID");
+//         return;
+//     }
+//     res.render("remove");
+// });
+
+// app.post("/remove", async (req, res) => {
+//     const product_id=req.query.id;
+//     if (!product_id) {
+//         res.send("Brak ID produktu");
+//         return;
+//     }
+//     await shoppingDb.deleteProduct(product_id);
+//     res.send(`Usunięto produkt o ID ${product_id}`);
+// });
 
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
 shoppingDb.initiateDB();

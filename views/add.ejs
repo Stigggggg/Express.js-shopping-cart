@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodawanie produktu</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Dodaj nowy produkt</h2>
+        <form action="/add" method="post">
+            <div class="form-group">
+                <label for="name">Nazwa produktu</label>
+                <input type="text" id="name" name="name" required><br>
+            </div>
+            <div class="form-group">
+                <label for="price">Cena</label>
+                <input type="text" id="price" name="price" required><br>
+            </div>
+            <div class="form-group">
+                <label for="description">Krótki opis</label>
+                <input type="text" id="description" name="description" required><br>
+            </div>
+            <div class="form-group">
+                <label for="category">Kategoria</label>
+                <input type="text" id="category" name="category" required><br>
+            </div>
+            <div class="form-group">
+                <label for="name">Ścieżka do obrazu</label>
+                <input type="text" id="picture" name="picture" required><br>
+            </div>
+            <button type="submit" class="btn">Dodaj produkt do bazy</button>
+        </form>
+    </div>
+</body>
+</html>
