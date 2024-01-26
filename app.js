@@ -70,10 +70,17 @@ app.post("/signup", async (req, res) => {
 });
 
 
+
 app.get("/anonymous", async (req, res) => {
     try {
-        const products = await shoppingDb.getAllProducts();
-        res.render("anonymous", { products : products.recordset });
+        var search = '';
+        if(search == '') {
+            const products = await shoppingDb.getAllProducts();
+            res.render("anonymous", { products : products.recordset, search : search});
+        }else{
+            const products = await shoppingDb.searchProduct(search);
+            res.render("anonymous", { products : products.recordset, search : search});
+        }
     }
     catch (error) {
         console.error(error);

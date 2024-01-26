@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produkty</title>
     <link rel="stylesheet" href="/style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
 
-<div class="row products">
+<div class="topnav">
+    <div class="search-container">
+        <input type="text" placeholder="Wyszukaj produkt.." id="searchbar">
+        <button onclick='search = document.getElementById("searchbar");' ><i class="fa fa-search"></i></button>
+    </div>
+
+</div>
+
+<div class="row_products">
     <% products.forEach(function(product) { %>
         <div class="product">
             <div class="product-image">
@@ -24,9 +34,9 @@
                     <div>
                         <span class="price"><%= parseFloat(product.PRICE).toFixed(2) %> zł</span>
                     </div>
-                    <div class="add_cart">
+                    <!-- <div class="add_cart">
                         <button class="add">Do koszyka</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
