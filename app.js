@@ -82,8 +82,6 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-
-
 app.get("/anonymous", async (req, res) => {
     try {
         var search = '';
@@ -100,7 +98,6 @@ app.get("/anonymous", async (req, res) => {
         res.send("Błąd podczas pobierania produktów");
     }
 });
-
 
 app.get("/admin", (req, res) => {
     res.render("admin");
@@ -137,30 +134,10 @@ app.post("/add", upload.single("picture"), async (req, res) => {
     }
 });
 
-//todo: remove i update
-// app.get("/remove", async (req, res) => {
-//     const product_id = req.query.id;
-//     if (!product_id) {
-//         res.send("Brak ID produktu");
-//         return;
-//     }
-//     const product = await shoppingDb.getProductById(product_id);
-//     if(!product) {
-//         res.send("Nie ma produktu o takim ID");
-//         return;
-//     }
-//     res.render("remove");
-// });
-
-// app.post("/remove", async (req, res) => {
-//     const product_id=req.query.id;
-//     if (!product_id) {
-//         res.send("Brak ID produktu");
-//         return;
-//     }
-//     await shoppingDb.deleteProduct(product_id);
-//     res.send(`Usunięto produkt o ID ${product_id}`);
-// });
+app.get("/modify-delete", async (req, res) => {
+    const products = await shoppingDb.getAllProducts();
+    res.render("modify-delete", { products : products.recordset });
+});
 
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
 shoppingDb.initiateDB();
