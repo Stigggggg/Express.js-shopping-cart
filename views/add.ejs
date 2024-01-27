@@ -9,7 +9,7 @@
 <body>
     <div class="form-container">
         <h2>Dodaj nowy produkt</h2>
-        <form action="/add" method="post">
+        <form action="/add" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Nazwa produktu</label>
                 <input type="text" id="name" name="name" required><br>
@@ -28,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label for="name">Ścieżka do obrazu</label>
-                <input type="text" id="picture" name="picture" required><br>
+                <input type="file" id="picture" name="picture" required><br>
             </div>
             <button type="submit" class="btn">Dodaj produkt do bazy</button>
         </form>

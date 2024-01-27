@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="confirm-delete">
+        <h2>Czy na pewno chcesz usunąć produkt:</h2>
+        <p>Nazwa produktu: <%= product.NAME %></p>
+        <p>Nazwa produktu: <%= product.PRICE %></p>
+        <p>Nazwa produktu: <%= product.DESCRIPTION %></p>
+        <button type="submit" class="btn">Tak</button>
+        <button onclick="window.location.href='/modify-delete'" class="btn">Nie</button>
+    </div>
+</body>
+</html>
