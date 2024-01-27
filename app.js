@@ -29,7 +29,10 @@ app.post("/login", async (req, res) => {
             if (password_match) {
                 if(user.ROLE==="ADMIN") {
                     res.redirect("/admin");
-                } else {
+                } else if(user.ROLE==="USER") {
+                    res.redirect("/known");
+                }
+                else {
                     res.send("Logowanie użytkownika pomyślne")
                 }
             }
@@ -70,16 +73,38 @@ app.post("/signup", async (req, res) => {
 });
 
 
-
+var search = '';
 app.get("/anonymous", async (req, res) => {
     try {
-        var search = '';
-        if(search == '') {
+        const serarchParams = new URLSearchParams(req.query);
+        const search = serarchParams.get('search');
+        console.log(search);
+        if(search == null) {
             const products = await shoppingDb.getAllProducts();
-            res.render("anonymous", { products : products.recordset, search : search});
+            res.render("anonymous", { products : products.recordset});
         }else{
             const products = await shoppingDb.searchProduct(search);
-            res.render("anonymous", { products : products.recordset, search : search});
+            res.render("anonymous", { products : products.recordset});
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.send("Błąd podczas pobierania produktów");
+    }
+});
+
+app.get("/known", async (req, res) => {
+    try {
+        const serarchParams = new URLSearchParams(req.query);
+        const search = serarchParams.get('search');
+        console.log(search);
+        const products = await shoppingDb.searchProduct(search);
+        if(search == null) {
+            const products = await shoppingDb.getAllProducts();
+            res.render("known", { products : products.recordset});
+        }else{
+            const products = await shoppingDb.searchProduct(search);
+            res.render("known", { products : products.recordset});
         }
     }
     catch (error) {
@@ -151,7 +176,7 @@ shoppingDb.initiateDB();
 //shoppingDb.getAllUsers();
 //shoppingDb.getAllProducts();
 //shoppingDb.deleteUser(2);
-//shoppingDb.searchProduct('fon');
+// shoppingDb.searchProduct('fon');
 // shoppingDb.createOrder(
 //     { id_user: 3, name: 'zamowienie1', date: '2016-10-23 12:45:37.1234567', orderValue: 13997},
 //     [

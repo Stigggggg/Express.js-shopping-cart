@@ -13,9 +13,11 @@
 <div class="topnav">
     <div class="search-container">
         <input type="text" name="searchbar" placeholder="Wyszukaj produkt.." id="searchbar">
-        <button onclick="window.location.href=`/anonymous?search=${document.getElementById('searchbar').value}`"><i class="fa fa-search"></i></button>
+        <button onclick="window.location.href=`/known?search=${document.getElementById('searchbar').value}`" style="color:white" ><i class="fa fa-search"></i></button>
     </div>
-    <a href="/login">Login</a>
+    <div class="cart">
+        <button onclick=""><i class="fa fa-shopping-cart" style="color:white"></i></button>
+    </div>
 
 </div>
 
@@ -35,9 +37,9 @@
                     <div>
                         <span class="price"><%= parseFloat(product.PRICE).toFixed(2) %> zł</span>
                     </div>
-                    <!-- <div class="add_cart">
-                        <button class="add">Do koszyka</button>
-                    </div> -->
+                    <div class="add_cart">
+                        <button class="addbutton">Do koszyka</button>
+                    </div>
                 </div>
             </div>
         </div>
