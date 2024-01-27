@@ -3,6 +3,8 @@
 const http = require("http");
 const express = require("express");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
+const path = require("path");
 const app = express();
 const shoppingDb = require("./shoppingDb.js");
 
@@ -10,6 +12,17 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+const storage = multer.diskStorage({
+    destination: (req,file,cb) => {
+        cb(null,"public/images");
+    },
+    filename: (req,file,cb) => {
+        console.log(file);
+        cb(null,Date.now()+path.extname(file.originalname));
+    }
+});
+const upload = multer({storage: storage});
 
 app.get("/", (req, res) => {
     res.render("menu");
@@ -107,10 +120,16 @@ app.get("/add", (req, res) => {
     res.render("add");
 });
 
-app.post("/add", async (req, res) => {
+app.post("/add", upload.single("picture"), async (req, res) => {
     try {
-        const { name, price, description, category, picture } = req.body;
-        await shoppingDb.insertProduct({ name, price, description, category, picture });
+        const { name, price, description, category } = req.body;
+        if(!req.file)
+        {
+            res.send("Brak załączonego obrazu");
+            return;
+        }
+        const picture_path=req.file.filename;
+        await shoppingDb.insertProduct({ name, price, description, category, picture: picture_path });
         res.send(`Dodano produkt ${name}`);
     } catch (error) {
         console.error(error);
