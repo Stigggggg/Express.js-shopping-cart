@@ -144,6 +144,25 @@
     color: black;
   }
 
+  .topnav .back {
+    float: left;
+    display: block;
+    color: black;
+    background: rgb(0, 140, 255);
+    text-align: center;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    margin-right: 14px;
+    margin-top: 7px;
+    margin-bottom: 8px;
+    margin-left: 14px;
+  }
+  .topnav .back:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
 .btn {
       display: block;
       width: 100%;
