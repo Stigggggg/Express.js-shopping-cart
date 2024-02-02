@@ -19,8 +19,15 @@
                 <input type="password" id="password" name="password" placeholder="Hasło">
             </div>
             <button type="submit" class="btn">Zaloguj się</button>
+            <% if (locals.message) { %>
+                <div class="alert">
+                    <p><%= locals.message %></p>
+                </div>
+            <% } %>
         </form>
         <p>Nie masz konta? <a href="/signup">Zarejestruj się</a></p>
+
     </div>
+
 </body>
 </html>

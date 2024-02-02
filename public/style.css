@@ -76,7 +76,8 @@ tr:nth-child(even)
 
 .form-group
 {
-    margin-bottom: 15 px;
+    margin-bottom: 10px;
+
 }
 
 .form-group label
@@ -110,4 +111,13 @@ tr:nth-child(even)
 p
 {
     margin-top: 15px;
+}
+
+.alert
+{
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: red;
+    text-align: center;
+    font-weight: bold;
 }

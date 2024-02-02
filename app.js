@@ -7,6 +7,7 @@ const multer = require("multer");
 const path = require("path");
 const app = express();
 const shoppingDb = require("./shoppingDb.js");
+const e = require("express");
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
@@ -45,16 +46,13 @@ app.post("/login", async (req, res) => {
                 } else if(user.ROLE==="USER") {
                     res.redirect("/known");
                 }
-                else {
-                    res.send("Logowanie użytkownika pomyślne")
-                }
             }
             else {
-                res.send("Nieprawidłowe hasło");
+                res.render("login", { message: "Niepoprawne dane logowania" });
             }
         }
         else {
-            res.send("Błąd logowania - brak takich danych w bazie");
+            res.render("login", { message: "Niepoprawne dane logowania" });
         }
     }
     catch (error) {
