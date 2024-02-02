@@ -11,12 +11,10 @@
 <body>
 
 <div class="topnav">
-    <a href="/anonymous" class="back">Wszystkie Produkty</a>
     <div class="search-container">
-        <input type="text" name="searchbar" placeholder="Wyszukaj produkt.." id="searchbar">
-        <button onclick="window.location.href=`/anonymous?search=${document.getElementById('searchbar').value}`"><i class="fa fa-search"></i></button>
+        <input type="text" placeholder="Wyszukaj produkt.." id="searchbar">
+        <button onclick='search = document.getElementById("searchbar");' ><i class="fa fa-search"></i></button>
     </div>
-    <a href="/login">Login</a>
 
 </div>
 

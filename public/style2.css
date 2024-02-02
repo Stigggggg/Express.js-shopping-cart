@@ -54,18 +54,14 @@
     font-size: 1.5em;
     font-weight: 1000;
 }
-.addbutton{
-    display: inline-block;
+.add{
+    border: 0;
     padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-block;
     background-color: tomato;
     color: whitesmoke;
     font-weight: 500;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.addbutton:hover{
-    background-color: rgb(251, 71, 39);
 }
 .row_products{
     display: flex;
@@ -106,61 +102,6 @@
 
 .topnav .search-container button:hover {
     background: #0025c7;
-  }
-
-.topnav button {
-    float: right;
-    display: block;
-    background: #000897;
-    text-align: center;
-    padding: 6px 10px;
-    text-decoration: none;
-    font-size: 17px;
-    border: none;
-    cursor: pointer;
-    margin-right: 16px;
-    margin-top: 8px;
-  }
-  .topnav button:hover {
-    background: #0025c7;
-  }
-
-.topnav a {
-    float: right;
-    display: block;
-    color: black;
-    background: chartreuse;
-    text-align: center;
-    padding: 8px 16px;
-    text-decoration: none;
-    font-size: 17px;
-    margin-right: 14px;
-    margin-top: 7px;
-    margin-bottom: 8px;
-  }
-
-  .topnav a:hover {
-    background-color: #ddd;
-    color: black;
-  }
-
-  .topnav .back {
-    float: left;
-    display: block;
-    color: black;
-    background: rgb(0, 140, 255);
-    text-align: center;
-    padding: 8px 16px;
-    text-decoration: none;
-    font-size: 17px;
-    margin-right: 14px;
-    margin-top: 7px;
-    margin-bottom: 8px;
-    margin-left: 14px;
-  }
-  .topnav .back:hover {
-    background-color: #ddd;
-    color: black;
   }
 
 .btn {

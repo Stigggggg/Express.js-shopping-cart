@@ -42,10 +42,7 @@ app.post("/login", async (req, res) => {
             if (password_match) {
                 if(user.ROLE==="ADMIN") {
                     res.redirect("/admin");
-                } else if(user.ROLE==="USER") {
-                    res.redirect("/known");
-                }
-                else {
+                } else {
                     res.send("Logowanie użytkownika pomyślne")
                 }
             }
@@ -87,35 +84,13 @@ app.post("/signup", async (req, res) => {
 
 app.get("/anonymous", async (req, res) => {
     try {
-        const serarchParams = new URLSearchParams(req.query);
-        const search = serarchParams.get('search');
-        console.log(search);
-        if(search == null) {
+        var search = '';
+        if(search == '') {
             const products = await shoppingDb.getAllProducts();
-            res.render("anonymous", { products : products.recordset});
+            res.render("anonymous", { products : products.recordset, search : search});
         }else{
             const products = await shoppingDb.searchProduct(search);
-            res.render("anonymous", { products : products.recordset});
-        }
-    }
-    catch (error) {
-        console.error(error);
-        res.send("Błąd podczas pobierania produktów");
-    }
-});
-
-app.get("/known", async (req, res) => {
-    try {
-        const serarchParams = new URLSearchParams(req.query);
-        const search = serarchParams.get('search');
-        console.log(search);
-        const products = await shoppingDb.searchProduct(search);
-        if(search == null) {
-            const products = await shoppingDb.getAllProducts();
-            res.render("known", { products : products.recordset});
-        }else{
-            const products = await shoppingDb.searchProduct(search);
-            res.render("known", { products : products.recordset});
+            res.render("anonymous", { products : products.recordset, search : search});
         }
     }
     catch (error) {
@@ -150,9 +125,10 @@ app.post("/add", upload.single("picture"), async (req, res) => {
             res.send("Brak załączonego obrazu");
             return;
         }
-        const picture_path=req.file.filename;
+        const picture_path = req.file.filename;
         await shoppingDb.insertProduct({ name, price, description, category, picture: picture_path });
-        res.send(`Dodano produkt ${name}`);
+        console.log(`Dodano produkt ${name}`);
+        res.redirect("/admin");
     } catch (error) {
         console.error(error);
         res.send("Błąd dodawania");
@@ -164,6 +140,53 @@ app.get("/modify-delete", async (req, res) => {
     res.render("modify-delete", { products : products.recordset });
 });
 
+app.get("/delete/:id", async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        await shoppingDb.deleteProduct(product_id);
+        console.log(`Usunięto produkt o ID ${product_id}`);
+        res.redirect("/modify-delete");
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas usuwania");
+    }
+});
+
+app.get("/modify/:id", async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const product = await shoppingDb.getProductById(product_id);
+        if(!product) {
+            res.send("Nie ma takiego produktu");
+            return;
+        }
+        res.render("modify", { product });
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas pobierania produktu do modyfikacji");
+    }
+});
+
+app.post("/modify/:id", upload.single("picture"), async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const { name, price, description, category } = req.body;
+        if(!req.file)
+        {
+            res.send("Brak załączonego obrazu");
+            return;
+        }
+        const picture_path = req.file.filename;
+        const updated = { name, price, description, category, picture: picture_path};
+        await shoppingDb.updateProduct(product_id, updated);
+        console.log(`Zaaktualizowano produkt o ID ${product_id}`);
+        res.redirect("/modify-delete");
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas modyfikowania produktu");
+    }
+});
+
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
 shoppingDb.initiateDB();
 //shoppingDb.insertProduct({name: 'Pralka', price: 2999, description: 'ładowana z góry', category: 'AGD', picture: 'pralka.jpg'});
@@ -172,7 +195,7 @@ shoppingDb.initiateDB();
 //shoppingDb.getAllUsers();
 //shoppingDb.getAllProducts();
 //shoppingDb.deleteUser(2);
-// shoppingDb.searchProduct('fon');
+//shoppingDb.searchProduct('fon');
 // shoppingDb.createOrder(
 //     { id_user: 3, name: 'zamowienie1', date: '2016-10-23 12:45:37.1234567', orderValue: 13997},
 //     [
