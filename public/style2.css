@@ -80,8 +80,8 @@
 }
 
 .topnav .search-container{
-    position: absolute;
-    right: 40%;
+    display: flex;
+    justify-content: center;
 }
 
 .topnav input[type=text] {
@@ -125,7 +125,7 @@
     background: #0025c7;
   }
 
-.topnav a {
+.topnav .zaloguj {
     float: right;
     display: block;
     color: black;
@@ -139,7 +139,7 @@
     margin-bottom: 8px;
   }
 
-  .topnav a:hover {
+  .topnav .zaloguj:hover {
     background-color: #ddd;
     color: black;
   }

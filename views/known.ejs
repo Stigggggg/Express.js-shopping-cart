@@ -12,14 +12,13 @@
 
 <div class="topnav">
     <a href="/known" class="back">Wszystkie Produkty</a>
+    <div class="cart">
+        <button onclick=""><i class="fa fa-shopping-cart" style="color:white"></i></button>
+    </div>
     <div class="search-container">
         <input type="text" name="searchbar" placeholder="Wyszukaj produkt.." id="searchbar">
         <button onclick="window.location.href=`/known?search=${document.getElementById('searchbar').value}`" style="color:white" ><i class="fa fa-search"></i></button>
     </div>
-    <div class="cart">
-        <button onclick=""><i class="fa fa-shopping-cart" style="color:white"></i></button>
-    </div>
-
 </div>
 
 <div class="row_products">
