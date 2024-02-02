@@ -28,8 +28,8 @@
                     </div>
                 </div>
             </div>
-            <button onclick="window.location.href='/modify/<%= product.ID %>'" class="btn">Modyfikuj produkt</button><br>
-            <button onclick="window.location.href='/delete/<%= product.ID %>'" class="btn">Usuń produkt</button>
+            <button onclick="window.location.href='/modify'" class="btn">Modyfikuj produkt</button><br>
+            <button onclick="window.location.href='/delete/:id'" class="btn">Usuń produkt</button>
         </div>
     <% }); %>
 
