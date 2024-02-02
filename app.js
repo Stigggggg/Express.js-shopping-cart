@@ -152,7 +152,8 @@ app.post("/add", upload.single("picture"), async (req, res) => {
         }
         const picture_path=req.file.filename;
         await shoppingDb.insertProduct({ name, price, description, category, picture: picture_path });
-        res.send(`Dodano produkt ${name}`);
+        console.log(`Dodano produkt ${name}`);
+        res.redirect("/admin");
     } catch (error) {
         console.error(error);
         res.send("Błąd dodawania");
@@ -162,6 +163,53 @@ app.post("/add", upload.single("picture"), async (req, res) => {
 app.get("/modify-delete", async (req, res) => {
     const products = await shoppingDb.getAllProducts();
     res.render("modify-delete", { products : products.recordset });
+});
+
+app.get("/delete/:id", async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        await shoppingDb.deleteProduct(product_id);
+        console.log(`Usunięto produkt o ID ${product_id}`);
+        res.redirect("/admin");
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas usuwania");
+    }
+});
+
+app.get("/modify/:id", async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const product = await shoppingDb.getProductById(product_id);
+        if(!product) {
+            res.send("Nie ma takiego produktu");
+            return;
+        }
+        res.render("modify", { product });
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas pobierania produktu do modyfikacji");
+    }
+});
+
+app.post("/modify/:id", upload.single("picture"), async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const { name, price, description, category } = req.body;
+        if(!req.file)
+        {
+            res.send("Brak załączonego obrazu");
+            return;
+        }
+        const picture_path = req.file.filename;
+        const updated = { name, price, description, category, picture: picture_path};
+        await shoppingDb.updateProduct(product_id, updated);
+        console.log(`Zaaktualizowano produkt o ID ${product_id}`);
+        res.redirect("/admin");
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas modyfikowania produktu");
+    }
 });
 
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1

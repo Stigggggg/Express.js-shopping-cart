@@ -153,6 +153,14 @@ async function getAllProducts() { // for creating website
   return result;
 }
 
+async function getProductById(productId) {
+  const conn = await connect();
+  const sql = `SELECT * FROM dbo.Products WHERE ID = ${productId}`;
+  const result = await runSQL(conn, sql, `Getting product by ID`);
+  conn.close();
+  return result.recordset[0];
+}
+
 async function searchProduct(product) { // for creating website
   const conn = await connect();
   const sql = `SELECT ID, NAME, PRICE, DESCRIPTION, CATEGORY, PICTURE FROM dbo.Products WHERE (NAME LIKE '%${product}%') OR (DESCRIPTION LIKE '%${product}%')`;
@@ -217,5 +225,6 @@ module.exports = {
   deleteUser,
   getAllProducts,
   searchProduct,
-  createOrder
+  createOrder,
+  getProductById
 }
