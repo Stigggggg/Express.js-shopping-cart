@@ -199,6 +199,17 @@ async function createOrder(order, orderitems) { //potrzbne do koszyka
   }
 }
 
+async function showBasket(ID_Order) {
+  const conn = await connect();
+  const sql = `SELECT O.ID, U.USERNAME, o.NAME, o.DATE, o.ORDERVALUE FROM dbo.Orders O INNER JOIN dbo.Users U ON O.ID_User = U.ID WHERE O.ID = ${ID_Order}`;
+  const sql2 = `SELECT P.NAME, O.QUANTITY, O.PRICE FROM dbo.OrderDetails O INNER JOIN dbo.Products P ON O.ID_Product = P.ID WHERE O.ID_Order = ${ID_Order}`;
+  const result = await runSQL(conn, sql, 'Showing the order');
+  const result2 = await runSQL(conn, sql2, 'Showing the orderitems');
+  const order = { order: result.recordset[0], orderDetails: result2.recordset };
+  console.log(order);
+  conn.close();
+  return order;
+}
 
 async function runSQL(conn, sql, comment) {
   return new Promise(function (resolve, reject) {
@@ -226,5 +237,6 @@ module.exports = {
   getAllProducts,
   searchProduct,
   createOrder,
-  getProductById
+  getProductById,
+  showBasket
 }

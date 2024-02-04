@@ -245,7 +245,7 @@ app.get("/logout", (req, res) => {
 });
 
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
-shoppingDb.initiateDB();
+// shoppingDb.initiateDB();
 //shoppingDb.insertProduct({name: 'Pralka', price: 2999, description: 'ładowana z góry', category: 'AGD', picture: 'pralka.jpg'});
 //shoppingDb.deleteProduct(1);
 //shoppingDb.updateProduct(5, {name: 'Pralka', price: 1414, description: 'ładowana z góry', category: 'AGD', picture: 'pralka.jpg'});
@@ -260,5 +260,6 @@ shoppingDb.initiateDB();
 //         {idProduct: 3, quantity: 1, price: 4000},
 //         {idProduct: 4, quantity: 1, price: 7999}
 //     ] )
+shoppingDb.showBasket(1)
 http.createServer(app).listen(3000);
 console.log("started");
