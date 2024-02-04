@@ -6,13 +6,18 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
 const app = express();
+const session = require("express-session");
 const shoppingDb = require("./shoppingDb.js");
-const e = require("express");
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(session({
+    secret: "tajnyklucz",
+    resave: false,
+    saveUninitialized: false
+}));
 
 const storage = multer.diskStorage({
     destination: (req,file,cb) => {
@@ -41,6 +46,12 @@ app.post("/login", async (req, res) => {
             const user = result.recordset[0];
             const password_match = await bcrypt.compare(password, user.PASSWORD);
             if (password_match) {
+                req.session.user = {
+                    id: user.ID,
+                    username: user.USERNAME,
+                    role: user.ROLE
+                };
+                console.log(req.session.user);
                 if(user.ROLE==="ADMIN") {
                     res.redirect("/admin");
                 } else if(user.ROLE==="USER") {
@@ -110,10 +121,22 @@ app.get("/known", async (req, res) => {
         const products = await shoppingDb.searchProduct(search);
         if(search == null) {
             const products = await shoppingDb.getAllProducts();
-            res.render("known", { products : products.recordset});
+            const user = req.session.user;
+            if(user && user.role === "USER") {
+                res.render("known", { products : products.recordset});
+            } else {
+                console.log("Nie możesz wejść na /known");
+                res.redirect("/login");
+            }
         }else{
             const products = await shoppingDb.searchProduct(search);
-            res.render("known", { products : products.recordset});
+            const user = req.session.user;
+            if(user && user.role === "USER") {
+                res.render("known", { products : products.recordset});
+            } else {
+                console.log("Nie możesz wejść na /known");
+                res.redirect("/login");
+            }
         }
     }
     catch (error) {
@@ -123,7 +146,13 @@ app.get("/known", async (req, res) => {
 });
 
 app.get("/admin", (req, res) => {
-    res.render("admin");
+    const user = req.session.user;
+    if(user && user.role === "ADMIN") {
+        res.render("admin");
+    } else {
+        console.log("Nie możesz wejść na /admin");
+        res.redirect("/login");
+    }
 });
 
 app.get("/users", async (req, res) => {
@@ -208,6 +237,11 @@ app.post("/modify/:id", upload.single("picture"), async (req, res) => {
         console.error(error);
         res.send("Błąd podczas modyfikowania produktu");
     }
+});
+
+app.get("/logout", (req, res) => {
+    req.session.user = undefined;
+    res.redirect("/");
 });
 
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
