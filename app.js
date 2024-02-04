@@ -260,6 +260,7 @@ app.get("/logout", (req, res) => {
 //         {idProduct: 3, quantity: 1, price: 4000},
 //         {idProduct: 4, quantity: 1, price: 7999}
 //     ] )
-shoppingDb.showBasket(1)
+//shoppingDb.showBasket(1)
+shoppingDb.showAllOrders()
 http.createServer(app).listen(3000);
 console.log("started");

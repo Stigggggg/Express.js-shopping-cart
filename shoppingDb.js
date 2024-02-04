@@ -211,6 +211,14 @@ async function showBasket(ID_Order) {
   return order;
 }
 
+async function showAllOrders() { // for admin
+  const conn = await connect();
+  const sql = `SELECT O.ID, U.USERNAME, o.NAME, o.DATE, o.ORDERVALUE FROM dbo.Orders O INNER JOIN dbo.Users U ON O.ID_User = U.ID`;
+  const result = await runSQL(conn, sql, 'Showing all orders');
+  console.log(result);
+  conn.close();
+}
+
 async function runSQL(conn, sql, comment) {
   return new Promise(function (resolve, reject) {
     conn.query(sql, function (err, result) {
@@ -238,5 +246,6 @@ module.exports = {
   searchProduct,
   createOrder,
   getProductById,
-  showBasket
+  showBasket,
+  showAllOrders
 }
