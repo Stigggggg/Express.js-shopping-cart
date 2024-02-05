@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zamówienia</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="orders-list">
+        <h2>Lista zamówień</h2>
+        <table border="1">
+            <tr>
+                <th>ID zamówienia</th>
+                <th>Nazwa użytkownika</th>
+                <th>Nazwa zamówienia</th>
+                <th>Data zamówienia</th>
+                <th>Kwota</th>
+            </tr>
+            <% orders.forEach(order => { %>
+                <tr>
+                    <td><%= order.ID %></td>
+                    <td><%= order.USERNAME %></td>
+                    <td><%= order.NAME %></td>
+                    <td><%= order.DATE %></td>
+                    <td><%= order.ORDERVALUE %></td>
+                </tr>
+            <% }); %>
+        </table>
+        <button onclick="window.location.href='/admin'" class="btn">Powrót do panelu administratora</button>
+    </div>
+</body>
+</html>

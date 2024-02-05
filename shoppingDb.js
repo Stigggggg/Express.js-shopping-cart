@@ -217,6 +217,7 @@ async function showAllOrders() { // for admin
   const result = await runSQL(conn, sql, 'Showing all orders');
   console.log(result);
   conn.close();
+  return result.recordset;
 }
 
 async function runSQL(conn, sql, comment) {

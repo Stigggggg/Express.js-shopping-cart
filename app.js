@@ -239,13 +239,23 @@ app.post("/modify/:id", upload.single("picture"), async (req, res) => {
     }
 });
 
+app.get("/orders", async (req, res) => {
+    try {
+        const orders = await shoppingDb.showAllOrders();
+        res.render("orders", { orders });
+    } catch (error) {
+        console.error(error);
+        res.send("Nie udało się pobrać zamówień");
+    }
+});
+
 app.get("/logout", (req, res) => {
     req.session.user = undefined;
     res.redirect("/");
 });
 
 //shoppingDb.dropDB(); co jakis czas by produkty zaczynaly sie od id 1 a nie np 12 i zeby admin byl tez userem nr 1
-// shoppingDb.initiateDB();
+shoppingDb.initiateDB();
 //shoppingDb.insertProduct({name: 'Pralka', price: 2999, description: 'ładowana z góry', category: 'AGD', picture: 'pralka.jpg'});
 //shoppingDb.deleteProduct(1);
 //shoppingDb.updateProduct(5, {name: 'Pralka', price: 1414, description: 'ładowana z góry', category: 'AGD', picture: 'pralka.jpg'});
@@ -260,7 +270,11 @@ app.get("/logout", (req, res) => {
 //         {idProduct: 3, quantity: 1, price: 4000},
 //         {idProduct: 4, quantity: 1, price: 7999}
 //     ] )
-//shoppingDb.showBasket(1)
-shoppingDb.showAllOrders()
+// shoppingDb.createOrder(
+//     {id_user: 5, name: "testowe", date: '2024-02-05 15:27:31.1234567', orderValue: 5200},
+//     [
+//         {idProduct: 1, quantity: 1, price: 4999},
+//         {idProduct: 6, quantity: 1, price: 201}
+//     ]);
 http.createServer(app).listen(3000);
 console.log("started");
