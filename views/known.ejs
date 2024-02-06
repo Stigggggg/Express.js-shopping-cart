@@ -12,8 +12,8 @@
 
 <div class="topnav">
     <a href="/known" class="back">Wszystkie Produkty</a>
-    <div class="cart">
-        <button onclick=""><i class="fa fa-shopping-cart" style="color:white"></i></button>
+    <div class="cartbutton">
+        <button onclick="window.location.href='/cart'"><i class="fa fa-shopping-cart" style="color:white"></i></button>
     </div>
     <div class="search-container">
         <input type="text" name="searchbar" placeholder="Wyszukaj produkt.." id="searchbar">
@@ -39,14 +39,46 @@
                         <span class="price"><%= parseFloat(product.PRICE).toFixed(2) %> zł</span>
                     </div>
                     <div class="add_cart">
-                        <button class="addbutton">Do koszyka</button>
+                    <form action="/addtocart" method="post">
+                        <input type="hidden" name="product_id" value="<%= product.ID %>">
+                        <input type="hidden" name="product_name" value="<%= product.NAME %>">
+                        <input type="hidden" name="product_price" value="<%= product.PRICE %>">
+                        <input type="hidden" name="product_picture" value="<%= product.PICTURE %>">
+                        <input type="submit" value="Do koszyka" class="addbutton">
+
+                    </form>
                     </div>
+                    <!-- <div class="add_cart">
+                        <button class="addbutton">Do koszyka</button>
+                    </div> -->
                 </div>
             </div>
         </div>
     <% }); %>
 
 </div>
+
+<div class="cart">
+    <h1>Koszyk</h1>
+    <div class="cart-products">
+        <% cart.forEach(function(product) { %>
+            <div class="cart-product">
+                <div class="cart-product-info">
+                    <h2 class="cart-product-title"><%= product.name %></h2>
+
+                    <h3 class="cart-product-price"><%= parseFloat(product.price).toFixed(2) %> zł * <%= product.quantity %> </h3>
+                </div>
+            </div>
+        <% }); %>
+        <div class="checkout">
+            <h2 class="total">Suma: <%= parseFloat(total).toFixed(2) %> zł</h2>
+            <form action="/checkout" method="post">
+                <input type="submit" value="Zapłać" class="addbutton">
+            </form>
+        </div>
+</div>
+
+
 
 </body>
 </html>

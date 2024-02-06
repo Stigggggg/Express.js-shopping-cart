@@ -55,6 +55,7 @@ app.post("/login", async (req, res) => {
                 if(user.ROLE==="ADMIN") {
                     res.redirect("/admin");
                 } else if(user.ROLE==="USER") {
+                    req.session.cart = [];
                     res.redirect("/known");
                 }
             }
@@ -115,24 +116,29 @@ app.get("/anonymous", async (req, res) => {
 
 app.get("/known", async (req, res) => {
     try {
+        console.log(req.session.cart);
         const serarchParams = new URLSearchParams(req.query);
         const search = serarchParams.get('search');
         console.log(search);
+        const user = req.session.user;
+        var cart = req.session.cart;
+        var total = 0;
+        for(var i = 0; i < cart.length; i++) {
+            total += cart[i].price * cart[i].quantity;
+        }
         const products = await shoppingDb.searchProduct(search);
         if(search == null) {
             const products = await shoppingDb.getAllProducts();
-            const user = req.session.user;
             if(user && user.role === "USER") {
-                res.render("known", { products : products.recordset});
+                res.render("known", { products : products.recordset, cart: cart, total: total});
             } else {
                 console.log("Nie możesz wejść na /known");
                 res.redirect("/login");
             }
         }else{
             const products = await shoppingDb.searchProduct(search);
-            const user = req.session.user;
             if(user && user.role === "USER") {
-                res.render("known", { products : products.recordset});
+                res.render("known", { products : products.recordset, cart: cart, total: total});
             } else {
                 console.log("Nie możesz wejść na /known");
                 res.redirect("/login");
@@ -144,6 +150,55 @@ app.get("/known", async (req, res) => {
         res.send("Błąd podczas pobierania produktów");
     }
 });
+
+
+app.post("/addtocart", async (req, res) => {
+    try {
+        const cart = req.session.cart;
+        const product_id = req.body.product_id;
+        const product = await shoppingDb.getProductById(product_id);
+        if(!product) {
+            res.send("Nie ma takiego produktu");
+            return;
+        }
+        const productInCart = cart.findIndex(p => p.idProduct === product.ID);
+        if(productInCart !== -1) {
+            cart[productInCart].quantity++;
+        } else {
+            const productdata = {idProduct: product.ID, name: product.NAME, price: product.PRICE, PICTURE: product.PICTURE, quantity: 1};
+            cart.push(productdata);
+        }
+
+        res.redirect("/known");
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas dodawania do koszyka");
+    }
+});
+
+app.post("/checkout", async (req, res) => {
+    try {
+        const cart = req.session.cart;
+        const user = req.session.user;
+        console.log(user);
+        if(!user) {
+            res.send("Nie jesteś zalogowany");
+            return;
+        }
+        const orderValue = cart.reduce((acc, p) => acc + p.price * p.quantity, 0);
+        console.log(orderValue);
+        const date = new Date().toISOString();
+        const order = await shoppingDb.createOrder({ id_user: user.id, name: user.username, date: date, orderValue }, cart);
+        req.session.cart = [];
+        res.redirect("/known");
+    } catch (error) {
+        console.error(error);
+        res.send("Błąd podczas składania zamówienia");
+    }
+});
+
+
+
 
 app.get("/admin", (req, res) => {
     const user = req.session.user;
